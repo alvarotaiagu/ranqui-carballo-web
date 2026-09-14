@@ -1,0 +1,436 @@
+/* ---------- Tokens ----------
+   Café Bar Ranqui (Carballo) es la octava familia estructural del
+   workspace. El negocio sí tiene logo real (remolino de café en una taza,
+   marrón/crema) pero no se recibió el archivo — solo se vio pegado en el
+   chat, sin ruta accesible (ver README) — así que la marca del sitio es
+   una interpretación propia, NO una reproducción. Paleta espresso/crema/
+   cobre deliberadamente distinta de: el granate+tostado de Jayce (único
+   otro café-bar del workspace), el carbón+ascua de A Lareira, el cuero+
+   latón de gmz, el roble de O Carballo y el azul-noche+latón de Caracola
+   (la otra web que también usa un espiral como motivo — ver
+   js/scene-remolino.js para la diferencia mecánica). */
+:root {
+  --tinta: #241611;
+  --tinta-2: #2E1C15;
+  --tinta-3: #3B271C;
+  --crema: #F6ECDD;
+  --crema-tenue: #D9C4A8;
+  --crema-mas-tenue: #A88F72;
+  --nata: #FFF6EA;
+  --cobre: #B8703A;
+  --cobre-tenue: #C98C5D;
+  --cobre-vivo: #E0994F;
+  --papel: #F3E9D8;
+  --papel-2: #EADFC7;
+  --tinta-papel: #241611;
+
+  --linea: color-mix(in srgb, var(--crema) 14%, transparent);
+  --linea-suave: color-mix(in srgb, var(--crema) 8%, transparent);
+
+  --display: "Domine", "Iowan Old Style", Georgia, serif;
+  --sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --nav-h: 4.75rem;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body {
+  margin: 0;
+  background: var(--tinta);
+  color: var(--crema);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, canvas { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+::selection { background: var(--cobre); color: var(--nata); }
+
+.skip-link {
+  position: absolute; left: 1rem; top: -4rem; z-index: 200;
+  background: var(--cobre); color: var(--nata);
+  padding: 0.75rem 1.25rem; border-radius: 999px; font-weight: 600;
+  transition: top 0.25s var(--ease);
+}
+.skip-link:focus { top: 1rem; }
+
+:focus-visible { outline: 2px solid var(--cobre-vivo); outline-offset: 3px; }
+
+.container { max-width: 74rem; margin: 0 auto; padding: 0 1.5rem; }
+@media (min-width: 60rem) { .container { padding: 0 2.5rem; } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cobre-tenue);
+}
+.eyebrow::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--cobre); box-shadow: 0 0 0.6rem var(--cobre);
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  padding: 0.95rem 1.7rem; border-radius: 999px; font-family: var(--sans);
+  font-size: 0.92rem; font-weight: 600; letter-spacing: 0.01em;
+  transition: transform 0.3s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease);
+  will-change: transform;
+}
+.btn-primary { background: var(--cobre); color: var(--nata); }
+.btn-primary:hover { background: var(--cobre-vivo); }
+.btn-ghost { border: 1.5px solid var(--linea); color: var(--crema); }
+.btn-ghost:hover, .btn-ghost:focus-visible { border-color: var(--cobre); color: var(--cobre-tenue); }
+.btn-note {
+  display: block; margin-top: 0.4rem; font-size: 0.72rem; color: var(--crema-mas-tenue);
+  font-style: italic; text-align: center;
+}
+
+/* ---------- Cookie banner ---------- */
+.cookie-banner {
+  position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 150;
+  max-width: 34rem; margin: 0 auto; background: var(--tinta-2);
+  border: 1px solid var(--linea); border-radius: 1rem; padding: 1.1rem 1.25rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem;
+  box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.45);
+}
+.cookie-banner[hidden] { display: none; }
+.cookie-banner p { font-size: 0.85rem; color: var(--crema-tenue); flex: 1 1 16rem; }
+.cookie-ack { background: var(--cobre); color: var(--nata); padding: 0.55rem 1.1rem; border-radius: 999px; font-weight: 600; font-size: 0.85rem; }
+
+/* ---------- Cabecera + panel de cuchara ----------
+   Octava familia estructural: en vez de barra superior (Melao), rail
+   lateral de puntos (A Taberna do Rio), overlay a pantalla completa
+   (Melao v2/O Carballo), cabecera "parrilla" (A Lareira) o arco que se
+   desenrolla (Caracola), aquí el botón de menú es una cucharilla — al
+   pulsar, un panel se posa centrado bajo la cabecera como una gota que
+   cae y se asienta (ver .stir-nav y runStirDrops en js/main.js). */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 100; height: var(--nav-h);
+  display: flex; align-items: center;
+  background: linear-gradient(180deg, rgba(36,22,17,0.92), rgba(36,22,17,0));
+  transition: background 0.3s var(--ease), backdrop-filter 0.3s var(--ease);
+}
+.site-header.is-scrolled {
+  background: rgba(36,22,17,0.88); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--linea-suave);
+}
+.site-header .container { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+
+.brand { display: inline-flex; align-items: center; gap: 0.65rem; font-family: var(--display); font-weight: 600; font-size: 1.3rem; color: var(--crema); }
+.brand img { width: 34px; height: 34px; border-radius: 50%; }
+
+.header-actions { display: flex; align-items: center; gap: 0.9rem; position: relative; }
+.header-actions .btn { padding: 0.7rem 1.3rem; font-size: 0.82rem; }
+.header-actions .btn-ghost { display: none; }
+@media (min-width: 40rem) { .header-actions .btn-ghost { display: inline-flex; } }
+
+.nav-toggle {
+  position: relative; width: 3rem; height: 3rem; border-radius: 50%;
+  border: 1.5px solid var(--linea); display: grid; place-items: center;
+}
+.nav-toggle:hover, .nav-toggle[aria-expanded="true"] { border-color: var(--cobre); }
+.nav-toggle svg { width: 20px; height: 20px; }
+.nav-toggle .spoon-path { stroke: var(--cobre-tenue); transition: stroke 0.25s var(--ease), transform 0.3s var(--ease); transform-origin: 50% 20%; }
+.nav-toggle[aria-expanded="true"] .spoon-path { stroke: var(--cobre-vivo); transform: rotate(25deg); }
+
+.stir-nav {
+  position: absolute; top: calc(100% + 0.75rem); right: 0; z-index: 99;
+  width: min(18rem, calc(100vw - 2rem));
+  background: var(--tinta-2); border: 1px solid var(--linea); border-radius: 1.1rem;
+  padding: 0.75rem; box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.45);
+  opacity: 0; transform: translateY(-10px) scale(0.96); pointer-events: none;
+  transition: opacity 0.3s var(--ease), transform 0.35s var(--ease);
+}
+.stir-nav.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.stir-nav-list { display: grid; gap: 0.2rem; }
+.stir-nav-list li {
+  opacity: 0; transform: translateY(-6px) scale(0.9);
+  transition: opacity 0.35s var(--ease), transform 0.4s var(--ease);
+}
+.stir-nav.is-open .stir-nav-list li { opacity: 1; transform: translateY(0) scale(1); }
+.stir-nav-list a {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.75rem 0.9rem; border-radius: 0.7rem; font-size: 0.98rem;
+}
+.stir-nav-list a:hover, .stir-nav-list a:focus-visible, .stir-nav-list a.is-active {
+  background: var(--tinta-3); color: var(--cobre-tenue);
+}
+.stir-nav-list .stir-drop { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--cobre); }
+.stir-scrim {
+  position: fixed; inset: 0; z-index: 98; background: rgba(20,12,8,0.4);
+  opacity: 0; pointer-events: none; transition: opacity 0.35s var(--ease);
+}
+.stir-nav.is-open ~ .stir-scrim, .stir-scrim.is-open { opacity: 1; pointer-events: auto; }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative; min-height: 100vh; display: flex; align-items: center;
+  overflow: hidden; padding-top: var(--nav-h);
+  background:
+    radial-gradient(120% 80% at 74% 30%, var(--tinta-3) 0%, transparent 60%),
+    var(--tinta);
+}
+.hero-scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.1s var(--ease); touch-action: pan-y; }
+.hero.is-animated .hero-scene-canvas { opacity: 1; }
+.hero-fallback-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(46% 46% at 74% 55%, color-mix(in srgb, var(--cobre) 22%, transparent) 0%, transparent 70%);
+}
+.hero.is-animated .hero-fallback-glow { display: none; }
+
+/* pointer-events: none aquí y auto en los hijos interactivos: .hero-content
+   es un bloque que ocupa todo el ancho del hero aunque el texto sea más
+   estrecho (max-width en .hero-claim), así que sin esto su mitad derecha
+   vacía tapaba el canvas — bloqueaba "arrastra para remover" y encima
+   disparaba selección de texto nativa del navegador al arrastrar. */
+.hero-content { position: relative; z-index: 2; padding: 6rem 0 5rem; transform-style: preserve-3d; pointer-events: none; }
+.hero-content a, .hero-content button { pointer-events: auto; }
+.hero-eyebrow { margin-bottom: 1.4rem; }
+.hero-title {
+  font-family: var(--display); font-weight: 600; color: var(--crema);
+  font-size: clamp(3rem, 9vw, 6.4rem); line-height: 0.98; letter-spacing: -0.01em;
+  max-width: 20ch;
+}
+.split-word { display: inline-block; overflow: hidden; vertical-align: top; }
+.split-word > span { display: inline-block; }
+
+.hero-claim {
+  margin-top: 1.6rem; max-width: 34rem; font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: var(--crema-tenue); line-height: 1.7;
+}
+.hero-actions { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.hero-meta { margin-top: 2.6rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border: 1px solid var(--linea); border-radius: 999px; padding: 0.5rem 1rem;
+  font-size: 0.82rem; color: var(--crema-tenue);
+}
+.hero-chip .hero-chip-muted { color: var(--crema-mas-tenue); }
+
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 2.2rem; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--crema-mas-tenue);
+}
+.scroll-cue .swirl-mini { width: 20px; height: 20px; animation: spin-slow 7s linear infinite; }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.hero-stir-hint { margin-top: 0.9rem; font-size: 0.76rem; color: var(--crema-mas-tenue); font-style: italic; }
+
+/* ---------- Placeholder tags (dato pendiente) ---------- */
+.pending {
+  color: var(--cobre-tenue); font-style: italic; font-size: 0.85em;
+  border-bottom: 1px dashed color-mix(in srgb, var(--cobre) 55%, transparent);
+}
+.pending-banner {
+  display: inline-flex; align-items: flex-start; gap: 0.6rem;
+  background: color-mix(in srgb, var(--cobre) 12%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--cobre) 45%, transparent);
+  color: var(--cobre-tenue); padding: 0.85rem 1.1rem; border-radius: 0.8rem;
+  font-size: 0.85rem; margin-top: 1.4rem; line-height: 1.55; max-width: 40rem;
+}
+
+/* ---------- Secciones genéricas ---------- */
+section { position: relative; padding: 7rem 0; }
+.section-head { max-width: 42rem; position: relative; z-index: 1; }
+.section-head h2 {
+  margin-top: 1rem; font-family: var(--display); font-weight: 600;
+  font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.08; color: var(--crema);
+}
+.section-head p { margin-top: 1.1rem; font-size: 1.05rem; color: var(--crema-tenue); line-height: 1.7; }
+.section-index {
+  font-family: var(--display); font-style: italic; font-size: 1rem; color: var(--crema-mas-tenue);
+}
+
+/* ---------- La taza no para (sobre el negocio) ---------- */
+.taza-section { background: var(--tinta); overflow: clip; }
+.taza-grid { margin-top: 3.5rem; display: grid; gap: 3rem; position: relative; z-index: 1; }
+@media (min-width: 56rem) { .taza-grid { grid-template-columns: 1.05fr 0.95fr; align-items: center; } }
+.taza-figure { position: relative; aspect-ratio: 1; max-width: 26rem; margin: 0 auto; }
+.taza-figure svg { width: 100%; height: 100%; }
+.taza-facts { margin-top: 2rem; display: grid; gap: 1.1rem; }
+.taza-facts li { display: flex; gap: 0.9rem; font-size: 0.98rem; color: var(--crema-tenue); }
+.taza-facts li::before {
+  content: ""; flex: none; width: 6px; height: 6px; margin-top: 0.55rem; border-radius: 50%;
+  background: var(--cobre);
+}
+.taza-facts strong { color: var(--crema); font-weight: 600; }
+
+/* ---------- Franja del día ----------
+   Distinta de la esfera circular de Caracola, el clock-card de A Lareira
+   y el "reloj" lineal de A Taberna do Rio: una franja horizontal continua
+   de las 7:30 a la 1:00, dividida en tramos del día, con un marcador
+   "estás aquí" que se mueve en directo según la hora real (ver
+   initFranjaLive en js/main.js). */
+.franja-section { background: var(--tinta-2); }
+.franja-strip {
+  position: relative; margin-top: 3.5rem; border: 1px solid var(--linea);
+  border-radius: 1.2rem; overflow: hidden; background: var(--tinta);
+}
+.franja-track { position: relative; display: flex; height: 6.5rem; }
+.franja-tramo {
+  /* flex-grow se fija inline por tramo (ver index.html), proporcional a
+     sus horas reales, para que el ancho visual case con el % calculado
+     en JS para .franja-now (que asume un mapeo lineal 7:30-1:00). */
+  position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+  justify-content: center; padding: 0 1.1rem; border-right: 1px solid var(--linea-suave);
+}
+.franja-tramo:last-child { border-right: none; }
+.franja-tramo .tramo-label { font-family: var(--display); font-size: 1.05rem; color: var(--crema); }
+.franja-tramo .tramo-hours { margin-top: 0.25rem; font-size: 0.76rem; color: var(--crema-mas-tenue); }
+.franja-tramo.is-closed { background: color-mix(in srgb, var(--tinta) 60%, transparent); opacity: 0.55; }
+.franja-now {
+  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--cobre-vivo);
+  box-shadow: 0 0 0.9rem var(--cobre-vivo); transition: left 0.6s var(--ease);
+  display: none;
+}
+.franja-now.is-live { display: block; }
+.franja-now::before {
+  content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%; background: var(--cobre-vivo);
+}
+.franja-status { margin-top: 1.4rem; display: flex; align-items: center; gap: 0.6rem; font-size: 0.92rem; color: var(--crema-tenue); }
+.franja-status .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cobre); box-shadow: 0 0 0.6rem var(--cobre); }
+.franja-status[data-closed] .status-dot { background: var(--crema-mas-tenue); box-shadow: none; }
+.franja-status strong { color: var(--crema); }
+.franja-note { margin-top: 2rem; font-size: 0.88rem; color: var(--crema-mas-tenue); max-width: 34rem; }
+
+/* ---------- Lo que se sabe hasta ahora (oferta) ---------- */
+.oferta-section { background: var(--tinta); }
+.oferta-grid { margin-top: 3rem; display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+.oferta-card {
+  border: 1px solid var(--linea); border-radius: 1.1rem; padding: 1.6rem 1.5rem;
+  background: var(--tinta-2); transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.oferta-card:hover { border-color: var(--cobre); transform: translateY(-3px); }
+.oferta-card .oferta-value { font-family: var(--display); font-size: 1.7rem; color: var(--crema); }
+.oferta-card .oferta-label { margin-top: 0.4rem; font-size: 0.85rem; color: var(--crema-tenue); }
+
+/* ---------- Valoración ---------- */
+.valoracion-section { background: var(--tinta-2); }
+.rating-meter { display: flex; align-items: center; gap: 1.4rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.rating-meter svg { width: 5.5rem; height: 5.5rem; flex: none; }
+.rating-meter-text strong { display: block; font-family: var(--display); font-size: 1.6rem; color: var(--crema); }
+.rating-meter-text span { font-size: 0.85rem; color: var(--crema-mas-tenue); }
+
+.canal-grid { margin-top: 2.5rem; display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.canal-card {
+  display: flex; align-items: center; gap: 1rem; border: 1px solid var(--linea);
+  border-radius: 1.1rem; padding: 1.3rem 1.4rem; background: var(--tinta);
+  transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.canal-card:hover, .canal-card:focus-visible { border-color: var(--cobre); transform: translateY(-3px); }
+.canal-card .canal-icon { flex: none; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--tinta-3); display: grid; place-items: center; font-size: 1.2rem; }
+.canal-card .canal-name { font-family: var(--display); font-size: 1.1rem; color: var(--crema); }
+.canal-card .canal-note { margin-top: 0.2rem; font-size: 0.78rem; color: var(--crema-mas-tenue); }
+
+/* ---------- Contacto: cierre a sangre completa ---------- */
+.contacto-section {
+  padding: 8rem 0; background: radial-gradient(120% 100% at 50% 0%, var(--tinta-3) 0%, var(--tinta) 65%);
+}
+.contacto-grid { margin-top: 3.5rem; display: grid; gap: 2.5rem; }
+@media (min-width: 56rem) { .contacto-grid { grid-template-columns: 1fr 1fr; } }
+.info-list { display: grid; gap: 1.5rem; }
+.info-list li { border-bottom: 1px solid var(--linea-suave); padding-bottom: 1.3rem; }
+.info-list .label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crema-mas-tenue); }
+.info-list .value { margin-top: 0.4rem; font-family: var(--display); font-size: 1.3rem; color: var(--crema); }
+.map-card {
+  position: relative; border-radius: 1.2rem; border: 1px dashed color-mix(in srgb, var(--cobre) 40%, transparent);
+  min-height: 18rem; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 2rem; background: var(--tinta-2);
+}
+.map-card iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 1.2rem; }
+.map-consent {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0.6rem;
+  color: var(--cobre-tenue); font-family: var(--sans); font-weight: 600; font-size: 0.98rem;
+  transition: color 0.25s var(--ease);
+}
+.map-consent:hover, .map-consent:focus-visible { color: var(--cobre-vivo); }
+.map-consent-icon { font-size: 1.8rem; }
+.map-consent-note {
+  font-weight: 400; font-size: 0.78rem; color: var(--crema-mas-tenue); max-width: 18rem;
+}
+
+/* ---------- Pie ---------- */
+.site-footer { border-top: 1px solid var(--linea-suave); padding: 3.5rem 0 2.5rem; background: var(--tinta); }
+.footer-grid { display: grid; gap: 2rem; }
+@media (min-width: 48rem) { .footer-grid { grid-template-columns: 1.2fr 1fr 1fr; } }
+.footer-brand { font-family: var(--display); font-size: 1.3rem; color: var(--crema); }
+.footer-brand p { margin-top: 0.8rem; font-size: 0.88rem; color: var(--crema-mas-tenue); max-width: 22rem; }
+.footer-nav h4, .footer-contact h4 { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crema-mas-tenue); margin-bottom: 1rem; }
+.footer-nav ul, .footer-contact ul { display: grid; gap: 0.6rem; }
+.footer-nav a, .footer-contact a { font-size: 0.92rem; color: var(--crema-tenue); }
+.footer-nav a:hover, .footer-nav a.is-active, .footer-contact a:hover { color: var(--cobre-tenue); }
+.footer-bottom {
+  margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--linea-suave);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;
+  font-size: 0.78rem; color: var(--crema-mas-tenue);
+}
+
+/* ---------- FAB de llamada ---------- */
+.call-fab {
+  position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 90;
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: var(--cobre); color: var(--nata); padding: 0.85rem 1.3rem;
+  border-radius: 999px; font-weight: 600; font-size: 0.88rem;
+  box-shadow: 0 1rem 2rem rgba(0,0,0,0.4);
+  opacity: 0; transform: translateY(14px) scale(0.94); pointer-events: none;
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease), background 0.25s var(--ease);
+}
+.call-fab.is-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.call-fab .fab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nata); }
+
+/* ---------- Progreso de remolino (esquina, decorativo) ---------- */
+.swirl-gauge {
+  position: fixed; left: 1.1rem; bottom: 1.25rem; z-index: 90; width: 3.4rem; height: 3.4rem;
+  opacity: 0; transition: opacity 0.4s var(--ease); pointer-events: none;
+}
+.swirl-gauge.is-visible { opacity: 1; }
+.swirl-gauge svg { width: 100%; height: 100%; }
+.swirl-gauge circle.track { stroke: var(--linea); }
+.swirl-gauge circle.fill { stroke: var(--cobre); transition: stroke-dashoffset 0.1s linear; }
+
+/* ---------- Cursor personalizado ---------- */
+.cursor-ring, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 999; pointer-events: none; border-radius: 50%; opacity: 0; transition: opacity 0.2s, width 0.2s, height 0.2s, border-color 0.2s; }
+.cursor-ring { width: 34px; height: 34px; margin: -17px; border: 1.5px solid var(--cobre-tenue); }
+.cursor-dot { width: 5px; height: 5px; margin: -2.5px; background: var(--cobre); }
+.cursor-ring.is-visible, .cursor-dot.is-visible { opacity: 1; }
+.cursor-ring.is-hover { width: 54px; height: 54px; margin: -27px; border-color: var(--cobre-vivo); }
+body.custom-cursor-active, body.custom-cursor-active * { cursor: none !important; }
+@media (pointer: coarse) { .cursor-ring, .cursor-dot { display: none; } }
+
+/* ---------- Reveals (JS añade estado inicial vía GSAP) ---------- */
+[data-reveal-group] { position: relative; }
+
+/* ---------- Accesibilidad / reducción de movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+body.motion-reduced .hero-scene-canvas { display: none; }
+body.motion-reduced .hero-fallback-glow { display: block; }
+
+/* ---------- Responsive ajustes finos ---------- */
+@media (max-width: 40rem) {
+  section { padding: 5rem 0; }
+  .stir-nav { right: -0.5rem; }
+  .swirl-gauge { display: none; }
+  .franja-track { flex-direction: column; height: auto; }
+  .franja-tramo { border-right: none; border-bottom: 1px solid var(--linea-suave); padding: 0.9rem 1.1rem; }
+  .franja-tramo:last-child { border-bottom: none; }
+  .franja-now { display: none !important; }
+
+  .hero-content::before {
+    content: "";
+    position: absolute; z-index: -1; inset: -1.25rem -1rem;
+    background: radial-gradient(130% 100% at 50% 40%, color-mix(in srgb, var(--tinta) 80%, transparent) 0%, color-mix(in srgb, var(--tinta) 70%, transparent) 65%, color-mix(in srgb, var(--tinta) 40%, transparent) 88%, transparent 100%);
+  }
+  .hero-title, .hero-claim { text-shadow: 0 2px 14px color-mix(in srgb, var(--tinta) 85%, transparent); }
+}
