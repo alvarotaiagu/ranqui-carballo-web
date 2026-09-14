@@ -279,29 +279,34 @@ function initScrollSpy() {
   });
 }
 
-/* ---------- Cromo de scroll: cabecera con fondo + relleno del indicador
-   de remolino (progreso de lectura, decorativo, esquina inferior) ---------- */
+/* ---------- Cromo de scroll: cabecera con fondo + taza que se llena
+   (progreso de lectura, esquina inferior) ----------
+   Misma idea que jayce-cafe-bar-carballo-web (a petición del usuario), con
+   la silueta de mug propia de este sitio: el rect de relleno crece desde
+   el fondo de la taza hacia arriba según el progreso de scroll. */
 function initScrollChrome() {
   if (!gsapReady) return;
   const header = document.querySelector(".site-header");
-  const gauge = document.querySelector(".swirl-gauge");
-  const gaugeFill = document.querySelector(".swirl-gauge .fill");
-
-  let circumference = 0;
-  if (gaugeFill) {
-    const r = gaugeFill.r.baseVal.value;
-    circumference = 2 * Math.PI * r;
-    gaugeFill.style.strokeDasharray = String(circumference);
-    gaugeFill.style.strokeDashoffset = String(circumference);
-  }
+  const gauge = document.querySelector(".taza-gauge");
+  const gaugeFill = document.querySelector("[data-taza-gauge-fill]");
+  const GAUGE_TOP = 14;
+  const GAUGE_BOTTOM = 32;
+  const GAUGE_HEIGHT = GAUGE_BOTTOM - GAUGE_TOP;
 
   ScrollTrigger.create({
     trigger: document.documentElement,
     start: "top top",
     end: "bottom bottom",
     onUpdate: (self) => {
-      if (gauge) gauge.classList.toggle("is-visible", self.progress > 0.02);
-      if (gaugeFill) gaugeFill.style.strokeDashoffset = String(circumference * (1 - self.progress));
+      if (gauge) {
+        gauge.classList.toggle("is-visible", self.progress > 0.02);
+        gauge.classList.toggle("is-full", self.progress > 0.97);
+      }
+      if (gaugeFill) {
+        const h = GAUGE_HEIGHT * self.progress;
+        gaugeFill.setAttribute("y", (GAUGE_BOTTOM - h).toFixed(2));
+        gaugeFill.setAttribute("height", h.toFixed(2));
+      }
     },
   });
 

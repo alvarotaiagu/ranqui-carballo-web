@@ -388,15 +388,24 @@ section { position: relative; padding: 7rem 0; }
 .call-fab.is-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 .call-fab .fab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nata); }
 
-/* ---------- Progreso de remolino (esquina, decorativo) ---------- */
-.swirl-gauge {
+/* ---------- Progreso de scroll: taza que se llena (esquina) ----------
+   La misma silueta de taza de mug (rounded-rect + asa) que la figura de
+   "La taza no para" (#la-taza), en miniatura, rellenándose de café según
+   cuánto se ha bajado en la página — igual de idea que
+   jayce-cafe-bar-carballo-web (a petición del usuario, que la vio allí y
+   quiso reutilizarla), pero con la silueta de mug propia de este sitio
+   (no la taza cónica con vapor de Jayce) y sin sustituir el logo de la
+   cabecera: vive en la esquina, donde antes había un anillo de progreso. */
+.taza-gauge {
   position: fixed; left: 1.1rem; bottom: 1.25rem; z-index: 90; width: 3.4rem; height: 3.4rem;
   opacity: 0; transition: opacity 0.4s var(--ease); pointer-events: none;
 }
-.swirl-gauge.is-visible { opacity: 1; }
-.swirl-gauge svg { width: 100%; height: 100%; }
-.swirl-gauge circle.track { stroke: var(--linea); }
-.swirl-gauge circle.fill { stroke: var(--cobre); transition: stroke-dashoffset 0.1s linear; }
+.taza-gauge.is-visible { opacity: 1; }
+.taza-gauge svg { width: 100%; height: 100%; }
+.taza-gauge-outline { fill: none; stroke: var(--crema-mas-tenue); stroke-width: 1.6; opacity: 0.6; }
+.taza-gauge-handle { fill: none; stroke: var(--crema-mas-tenue); stroke-width: 1.6; opacity: 0.6; stroke-linecap: round; }
+.taza-gauge-fill { fill: var(--cobre); transition: fill 0.3s var(--ease); }
+.taza-gauge.is-full .taza-gauge-fill { fill: var(--cobre-vivo); }
 
 /* ---------- Cursor personalizado ---------- */
 .cursor-ring, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 999; pointer-events: none; border-radius: 50%; opacity: 0; transition: opacity 0.2s, width 0.2s, height 0.2s, border-color 0.2s; }
@@ -421,7 +430,7 @@ body.motion-reduced .hero-fallback-glow { display: block; }
 @media (max-width: 40rem) {
   section { padding: 5rem 0; }
   .stir-nav { right: -0.5rem; }
-  .swirl-gauge { display: none; }
+  .taza-gauge { display: none; }
   .franja-track { flex-direction: column; height: auto; }
   .franja-tramo { border-right: none; border-bottom: 1px solid var(--linea-suave); padding: 0.9rem 1.1rem; }
   .franja-tramo:last-child { border-bottom: none; }
