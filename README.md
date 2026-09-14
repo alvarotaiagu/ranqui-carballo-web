@@ -20,7 +20,9 @@ Negocio real, sin web previa. El usuario pasó:
   el chat sin ruta de archivo accesible (se usó una marca de autoría propia
   mientras tanto) y subida como archivo en una sesión posterior el mismo
   día — ver "Marca gráfica" más abajo.
-- Su Facebook (`facebook.com/profile.php?id=100064840909932`) e Instagram
+- Su Facebook (`facebook.com/p/Café-Bar-Ranqui-100064840909932/` —
+  actualizado por el usuario, mismo ID de página que la URL
+  `profile.php?id=...` usada al principio) e Instagram
   (`instagram.com/cafebar_ranqui`) reales, ambos enlazados tal cual en el
   sitio. Se intentó extraer contenido de ambos con la herramienta de
   fetch de la sesión; los dos están detrás de un muro de login y no
