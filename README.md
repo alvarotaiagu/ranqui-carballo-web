@@ -91,6 +91,16 @@ navegación de ninguna:
   arco que se desenrolla como Caracola, ni rail lateral como A Taberna do
   Rio, ni overlay a pantalla completa como Melao v2/O Carballo, ni
   cabecera "parrilla" como A Lareira).
+- **Progreso de scroll: taza que se llena** (`.taza-gauge`, esquina
+  inferior): a petición explícita del usuario, que vio esta idea en
+  jayce-cafe-bar-carballo-web y quiso reutilizarla — ahí sustituye al logo
+  de la cabecera (taza cónica + vapor); aquí vive en la esquina como
+  indicador independiente, con la silueta de mug (rounded-rect + asa) que
+  ya usa la figura de `#la-taza`, sin tocar el logo real de la cabecera.
+  Excepción registrada de "no repetir motivo entre webs hermanas" —ver
+  [[project-template-library-strategy]]— igual que
+  `melao-carballo-web-v2` reutilizó el concepto día/noche: aquí el usuario
+  pidió expresamente traer esta idea concreta de Jayce.
 - **Franja del día** (`#franja`, `.franja-strip`): una franja horizontal
   continua de 7:30 a 1:00 dividida en cuatro tramos, con un marcador
   "ahora" que se mueve en directo según la hora real
