@@ -330,6 +330,22 @@ function initScrollChrome() {
       onLeaveBack: () => header.classList.remove("is-scrolled"),
     });
   }
+
+  // La taza-gauge es un elemento fijo en la esquina — al llegar al pie,
+  // ese rincón ya lo ocupa la propia marca del footer (icono + "Ranqui"),
+  // así que se oculta mientras el pie está a la vista para no chocar con
+  // ella (se notó sobre todo en móvil, donde el pie cabe casi entero en
+  // una pantalla, pero aplica igual en escritorio).
+  const footer = document.querySelector(".site-footer");
+  if (gauge && footer) {
+    ScrollTrigger.create({
+      trigger: footer,
+      start: "top 90%",
+      end: "bottom bottom",
+      onEnter: () => gauge.classList.add("is-in-footer"),
+      onLeaveBack: () => gauge.classList.remove("is-in-footer"),
+    });
+  }
 }
 
 /* ---------- Motion setup ---------- */

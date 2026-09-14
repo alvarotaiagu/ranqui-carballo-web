@@ -421,6 +421,7 @@ section { position: relative; padding: 7rem 0; }
 .taza-gauge-handle { fill: none; stroke: var(--crema-mas-tenue); stroke-width: 1.6; opacity: 0.6; stroke-linecap: round; }
 .taza-gauge-fill { fill: var(--cobre); transition: fill 0.3s var(--ease); }
 .taza-gauge.is-full .taza-gauge-fill { fill: var(--cobre-vivo); }
+.taza-gauge.is-in-footer { opacity: 0; }
 
 /* ---------- Cursor personalizado ---------- */
 .cursor-ring, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 999; pointer-events: none; border-radius: 50%; opacity: 0; transition: opacity 0.2s, width 0.2s, height 0.2s, border-color 0.2s; }
@@ -445,7 +446,9 @@ body.motion-reduced .hero-fallback-glow { display: block; }
 @media (max-width: 40rem) {
   section { padding: 5rem 0; }
   .stir-nav { right: -0.5rem; }
-  .taza-gauge { display: none; }
+  /* Más pequeña que en escritorio: en una columna angosta un elemento fijo
+     de 3.4rem tapa demasiado texto de las tarjetas que quedan debajo. */
+  .taza-gauge { width: 2.5rem; height: 2.5rem; left: 0.85rem; bottom: 0.9rem; }
   .franja-track { flex-direction: column; height: auto; }
   .franja-tramo { border-right: none; border-bottom: 1px solid var(--linea-suave); padding: 0.9rem 1.1rem; }
   .franja-tramo:last-child { border-bottom: none; }
