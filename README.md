@@ -16,8 +16,10 @@ Negocio real, sin web previa. El usuario pasó:
   146 reseñas, categoría "Cafetería", precio 10-20 € por persona, horario
   semanal completo).
 - Una imagen del **logo real** del negocio (remolino de café marrón/crema
-  dentro de una taza, con el rótulo "Ranqui · Café Bar"), pegada en el
-  chat sin ruta de archivo accesible — ver "Marca gráfica" más abajo.
+  dentro de una taza, con el rótulo "Ranqui · Café Bar"), pegada primero en
+  el chat sin ruta de archivo accesible (se usó una marca de autoría propia
+  mientras tanto) y subida como archivo en una sesión posterior el mismo
+  día — ver "Marca gráfica" más abajo.
 - Su Facebook (`facebook.com/profile.php?id=100064840909932`) e Instagram
   (`instagram.com/cafebar_ranqui`) reales, ambos enlazados tal cual en el
   sitio. Se intentó extraer contenido de ambos con la herramienta de
@@ -108,16 +110,33 @@ navegación de ninguna:
 
 ## Marca gráfica
 
-El negocio SÍ tiene logo real (remolino marrón/crema dentro de una taza,
-rótulo "Ranqui · Café Bar"), pero no se recibió el archivo de imagen —
-solo se vio pegado en el chat, sin ruta accesible. La marca actual del
-sitio (`scripts/generate_brand_mark.py`, PIL) es una **interpretación
-geométrica propia del mismo concepto** (taza + remolino en la paleta del
-sitio) — no un trazado ni una reproducción del logo real. En cuanto el
-negocio pase el archivo, sustituir todo `assets/img/logo/` por el logo
-real y regenerar `manifest.json` si hace falta. `assets/img/web/og-image.jpg`
-se generó igual (`scripts/generate_og_image.py`), sin fotografía ni cifras
-inventadas.
+**Actualizado**: el negocio pasó el archivo real del logo
+(`assets/img/source/logo-original.jpg` — remolino marrón/crema dentro de
+una taza con vapor, rótulo "Ranqui · Café Bar", fondo blanco con una
+franja negra de recorte al pie). Se procesó con `scripts/process_logo.py`:
+
+- Recorte de la franja negra inferior y separación icono/rótulo (medidos
+  a mano sobre el archivo real: `BLACK_BAR_TOP`/`ICON_BOTTOM`).
+- Fondo blanco → transparente por distancia de color (no por luminancia
+  como en O Carballo, porque aquí la marca es a todo color, no un trazo
+  monocromo) — `whiten_to_alpha()`, con una rampa suave para no dejar
+  borde duro ni comerse los tonos crema más claros del propio remolino.
+- `assets/img/logo/mark-512.png` / `mark-master.png`: solo el icono
+  (taza + remolino + vapor), sin el rótulo — usado en cabecera/pie junto
+  al wordmark en HTML. `mark-lockup.png`: icono + rótulo completo, para
+  usos grandes.
+- Favicons/manifest (`icon-16` a `icon-512`): el icono real sobre un
+  medallón de espresso con anillo de cobre, mismo criterio que las webs
+  hermanas.
+- `assets/img/web/og-image.jpg`: el icono real a tamaño grande + tipografía
+  propia para "Ranqui" (el rótulo del logo se ve borroso si se escala el
+  lockup completo a 1200×630) + la valoración real.
+
+**Ya obsoleto** (se conserva solo como registro de lo que se usó mientras
+no teníamos el archivo real, ver historial de commits):
+`scripts/generate_brand_mark.py` / `generate_og_image.py`, la marca de
+autoría propia que generaban. No se ejecutan ni se referencian desde
+`index.html`.
 
 ## Fotografía
 
@@ -129,24 +148,22 @@ fotografía de stock).
 
 ## Qué falta — pedir al negocio antes de darlo por cerrado
 
-1. **El archivo del logo real** — hoy se usa una marca de autoría propia
-   (ver "Marca gráfica").
-2. **Carta completa con platos y precios** — `#oferta` solo tiene los
+1. **Carta completa con platos y precios** — `#oferta` solo tiene los
    cuatro datos confirmados de la ficha de Google; no hay un solo plato
    con precio real en todo el sitio.
-3. **Reseñas con texto completo** — hoy `#valoracion` solo muestra la
+2. **Reseñas con texto completo** — hoy `#valoracion` solo muestra la
    valoración agregada (4,6★/146); en cuanto lleguen capturas de reseñas
    reales, se pueden citar tal cual como en el resto de webs hermanas.
-4. **Fotos reales del local o de platos**, si el negocio quiere
+3. **Fotos reales del local o de platos**, si el negocio quiere
    incorporarlas — hoy el sitio es intencionadamente gráfico.
-5. **Confirmar el nombre de marca** — Google lista el negocio como "Bar
+4. **Confirmar el nombre de marca** — Google lista el negocio como "Bar
    Ranqui"; el logo real dice "Ranqui · Café Bar". El sitio usa "Café Bar
    Ranqui" como punto medio; vale la pena confirmar con el dueño.
-6. **WhatsApp**, si el negocio lo usa — hoy solo hay `tel:+34881984847`.
+5. **WhatsApp**, si el negocio lo usa — hoy solo hay `tel:+34881984847`.
 
-Ya resueltos con la captura de Google: dirección, teléfono, horario
-semanal, valoración (4,6★/146), categoría, precio medio y el mapa de
-`#contacto`.
+Ya resueltos: dirección, teléfono, horario semanal, valoración (4,6★/146),
+categoría y precio medio (captura de Google), el mapa de `#contacto`, y
+**el logo real** (ver "Marca gráfica").
 
 ## Accesibilidad y resiliencia
 
