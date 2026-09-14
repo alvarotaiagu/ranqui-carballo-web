@@ -274,6 +274,10 @@ section { position: relative; padding: 7rem 0; }
   position: relative; margin-top: 3.5rem; border: 1px solid var(--linea);
   border-radius: 1.2rem; overflow: hidden; background: var(--tinta);
 }
+/* Carril propio para el marcador "ahora" (aparte de .franja-track): así
+   la aguja nunca cae encima del texto de un tramo — solo toca el borde
+   que separa este carril de la fila de abajo. */
+.franja-now-track { position: relative; height: 1.7rem; border-bottom: 1px solid var(--linea-suave); }
 .franja-track { position: relative; display: flex; height: 6.5rem; }
 .franja-tramo {
   /* flex-grow se fija inline por tramo (ver index.html), proporcional a
@@ -281,20 +285,27 @@ section { position: relative; padding: 7rem 0; }
      en JS para .franja-now (que asume un mapeo lineal 7:30-1:00). */
   position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
   justify-content: center; padding: 0 1.1rem; border-right: 1px solid var(--linea-suave);
+  transition: background 0.5s var(--ease);
 }
 .franja-tramo:last-child { border-right: none; }
 .franja-tramo .tramo-label { font-family: var(--display); font-size: 1.05rem; color: var(--crema); }
 .franja-tramo .tramo-hours { margin-top: 0.25rem; font-size: 0.76rem; color: var(--crema-mas-tenue); }
 .franja-tramo.is-closed { background: color-mix(in srgb, var(--tinta) 60%, transparent); opacity: 0.55; }
+/* Resalte sutil del tramo activo: refuerza "estás aquí" sin depender solo
+   de la aguja de arriba, que ya no toca la fila. */
+.franja-tramo.is-now { background: color-mix(in srgb, var(--cobre) 10%, transparent); }
+.franja-tramo.is-now .tramo-label { color: var(--cobre-tenue); }
+
 .franja-now {
-  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--cobre-vivo);
-  box-shadow: 0 0 0.9rem var(--cobre-vivo); transition: left 0.6s var(--ease);
+  position: absolute; bottom: 0; top: auto; width: 2px; height: 0.8rem;
+  background: var(--cobre-vivo); box-shadow: 0 0 0.7rem var(--cobre-vivo);
+  transition: left 0.6s var(--ease);
   display: none;
 }
 .franja-now.is-live { display: block; }
 .franja-now::before {
   content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
-  width: 11px; height: 11px; border-radius: 50%; background: var(--cobre-vivo);
+  width: 9px; height: 9px; border-radius: 50%; background: var(--cobre-vivo);
 }
 .franja-status { margin-top: 1.4rem; display: flex; align-items: center; gap: 0.6rem; font-size: 0.92rem; color: var(--crema-tenue); }
 .franja-status .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cobre); box-shadow: 0 0 0.6rem var(--cobre); }
@@ -434,7 +445,7 @@ body.motion-reduced .hero-fallback-glow { display: block; }
   .franja-track { flex-direction: column; height: auto; }
   .franja-tramo { border-right: none; border-bottom: 1px solid var(--linea-suave); padding: 0.9rem 1.1rem; }
   .franja-tramo:last-child { border-bottom: none; }
-  .franja-now { display: none !important; }
+  .franja-now-track { display: none; }
 
   .hero-content::before {
     content: "";

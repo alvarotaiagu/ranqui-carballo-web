@@ -119,6 +119,7 @@ initMapConsent();
 function initFranjaLive() {
   const strip = document.querySelector(".franja-strip");
   const marker = document.querySelector(".franja-now");
+  const tramos = document.querySelectorAll(".franja-tramo");
   const status = document.querySelector("[data-franja-status]");
   if (!strip) return;
   const label = status && status.querySelector("[data-franja-label]");
@@ -126,6 +127,9 @@ function initFranjaLive() {
 
   const STRIP_START = 7.5;
   const STRIP_END = 25; // 1:00 del día siguiente
+  // Mismos límites de hora que los flex-grow de #franja en index.html
+  // (7:30/12:00/17:00/20:00/1:00) — usados para resaltar el tramo activo.
+  const TRAMO_BOUNDS = [7.5, 12, 17, 20, 25];
   const RANGES = [null, [7.5, 23.75], [7.5, 23.75], [7.5, 23.75], [7.5, 23.75], [7.5, 23.75], [8.5, 25]];
   const TODAY_TEXT = [
     "Cerrado hoy",
@@ -149,16 +153,24 @@ function initFranjaLive() {
 
     strip.classList.toggle("is-closed-today", !todayRange && !spillover);
 
-    if (marker) {
-      if (open) {
-        const displayHours = spillover ? hours + 24 : hours;
+    let activeIndex = -1;
+    if (open) {
+      const displayHours = spillover ? hours + 24 : hours;
+      if (marker) {
         const pct = Math.max(0, Math.min(100, ((displayHours - STRIP_START) / (STRIP_END - STRIP_START)) * 100));
         marker.style.left = pct + "%";
         marker.classList.add("is-live");
-      } else {
-        marker.classList.remove("is-live");
       }
+      for (let i = 0; i < TRAMO_BOUNDS.length - 1; i++) {
+        if (displayHours >= TRAMO_BOUNDS[i] && displayHours < TRAMO_BOUNDS[i + 1]) {
+          activeIndex = i;
+          break;
+        }
+      }
+    } else if (marker) {
+      marker.classList.remove("is-live");
     }
+    tramos.forEach((el, i) => el.classList.toggle("is-now", i === activeIndex));
 
     if (status && label && detail) {
       status.toggleAttribute("data-closed", !open);
